@@ -26,6 +26,33 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>tomcat-maven-plugin</artifactId>
+        <configuration>
+	  <url>http://152.70.71.239:8080/manager</url>
+          <server>tomcat-server</server>
+          <path>/hello-world-script</path>
+        </configuration>
+      </plugin>
+      <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven3-plugin</artifactId>
+            <configuration>
+                <container>
+                    <containerId>tomcat9x</containerId>
+                    <type>remote</type>
+                </container>
+                <configuration>
+		    <type>runtime</type>
+		    <properties>
+                        <cargo.remote.username>deployer</cargo.remote.username>
+                        <cargo.remote.password>deployer</cargo.remote.password>
+                        <cargo.tomcat.manager.url>http://152.70.71.239:8080/manager/text</cargo.tomcat.manager.url>
+                    </properties>
+                </configuration>
+            </configuration>
+       </plugin>
     </plugins>
   </build>
 
