@@ -30,6 +30,7 @@
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven3-plugin</artifactId>
+        <version>1.9.5-SNAPSHOT</version>
         <configuration>
           <container>
             <containerId>tomcat9x</containerId>
@@ -38,24 +39,9 @@
           <configuration>
             <type>runtime</type>
             <properties>
-              <cargo.remote.username>${remote.user}</cargo.remote.username>
-              <cargo.remote.password>${remote.pass}</cargo.remote.password>
-              <cargo.tomcat.manager.url>http://152.70.71.239:8080/manager/text</cargo.tomcat.manager.url>
+              <cargo.server.settings>tomcat-server</cargo.server.settings>
             </properties>
           </configuration>
-          <deployer>
-            <type>remote</type>
-            <deployables>
-              <deployable>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>hello-world</artifactId>
-                <type>war</type>
-                <properties>
-                  <context>/hello-world-script</context>
-                </properties>
-              </deployable>
-            </deployables>
-          </deployer>
         </configuration>
        </plugin>
     </plugins>
