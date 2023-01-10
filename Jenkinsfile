@@ -11,13 +11,15 @@ pipeline {
         stage('BUILD') {
             agent {label 'slave01'}
             parallel {
-            stage ('Change Directory')
+                stage ('Change Directory') {
                 steps {
                sh 'cd /home/ec2-user/jenkins/workspace/agentpipeline'
-                    stage ('Maven install')
+                    stage ('Maven install') {
                 steps {
                sh 'mvn clean install'
                 }  
+                    }
+                }
             }
                 }
         }
