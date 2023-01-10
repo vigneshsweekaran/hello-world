@@ -10,7 +10,7 @@ pipeline {
         }
         stage('BUILD') {
             agent {label 'slave01'}
-            pipeline {
+            parallel {
 		stage('Change directory'){
 		steps {
                sh 'cd /home/ec2-user/jenkins/workspace/agentpipeline'
