@@ -10,10 +10,16 @@ pipeline {
         }
         stage('BUILD') {
             agent {label 'slave01'}
-            steps {
-               sh '''cd /home/ec2-user/jenkins/workspace/agentpipeline
-                mvn clean install'''
+            parallel {
+            stage ('Change Directory')
+                steps {
+               sh 'cd /home/ec2-user/jenkins/workspace/agentpipeline'
+                    stage ('Maven install')
+                steps {
+               sh 'mvn clean install'
+                }  
             }
+                }
         }
         stage('DEPLOY') {
             agent {label 'slave01'}
