@@ -19,7 +19,7 @@ pipeline {
             agent {label 'slave01'}
             steps {
                sh '''cd /home/ec2-user/jenkins/workspace/agentpipeline/target
-                sudo cp *.war /opt/tomcat9/webapps'''
+                sudo cp *.war /opt/tomcat10/webapps'''
             }
         }
     }
