@@ -1,3 +1,4 @@
 FROM ubuntu
-RUN sudo apt-get install -y maven
+RUN apt-get update
+RUN apt-get install -y maven
 RUN mvn clean install
