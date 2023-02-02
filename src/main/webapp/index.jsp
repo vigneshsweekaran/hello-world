@@ -42,7 +42,7 @@
     </section>
   </main>
   <footer>
-    <p>Copyright &copy; Wall Paint Industry</p>
+    <p>Copyright &copy; Prajwal's Industry</p>
   </footer>
 </body>
 </html>
