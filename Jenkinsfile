@@ -16,7 +16,7 @@ pipeline {
             }
         }
         stage('DEPLOY') {
-            agent {label 'slave01'}
+           
             steps {
                sh '''cd /home/ec2-user/jenkins/workspace/hello-world/target
                 sudo cp *.war /opt/tomcat10/webapps'''
