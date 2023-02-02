@@ -2,12 +2,12 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Wall Paint Industry</title>
+  <title>Website created by prajwal</title>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
   <header>
-    <h1>Wall Paint Industry</h1>
+    <h1>Prajwal's Company</h1>
     <nav>
       <ul>
         <li><a href="#products">Products</a></li>
@@ -19,7 +19,7 @@
   <main>
     <section id="products">
       <h2>Our Products</h2>
-      <p>Here is a list of our wall paint products:</p>
+      <p>Here is a list of our products:</p>
       <ul>
         <li>Matte Finish Paint</li>
         <li>Satin Finish Paint</li>
