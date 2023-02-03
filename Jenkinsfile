@@ -11,8 +11,8 @@ pipeline {
         stage('BUILD') {
             agent {label 'slave01'}
             steps {
-               sh '''cd /home/ec2-user/jenkins/workspace/hello-world
-                mvn clean install'''
+               sh 'cd /home/ec2-user/jenkins/workspace/hello-world'
+                sh 'mvn clean install'
             }
         }
         stage('DEPLOY') {
