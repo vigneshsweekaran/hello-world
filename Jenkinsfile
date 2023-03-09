@@ -3,16 +3,26 @@ pipeline {
 
     stages {
         stage('CHECKOUT') {
-            
             steps {
                 git branch: 'main', url: 'https://github.com/prajwal1691/hello-world'
              }
         }
-        stage('SonarQube analysis') {
+        stage('BUILD') {
             steps {
-                // Invoke the SonarQube scanner
-                withSonarQubeEnv(credentialsId: 'jenkins-sonar') {
-                    sh 'sonar-scanner'
+               sh 'cd /var/jenkins_home/workspace/sonar'
+                sh 'mvn clean install'
+            }
+        }
+        stage('Sonarqube') {
+            environment {
+              scannerHome = tool 'SonarQubeScanner'
+             }
+            steps {
+              withSonarQubeEnv('sonarqube') {
+               sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=/var/jenkins_home/workspace/sonar/target"
+                }
+               timeout(time: 1, unit: 'MINUTES') {
+              waitForQualityGate abortPipeline: true
                 }
             }
         }
