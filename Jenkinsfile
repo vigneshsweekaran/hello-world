@@ -11,7 +11,7 @@ pipeline {
         stage('SonarQube analysis') {
             steps {
                 // Invoke the SonarQube scanner
-                withSonarQubeEnv('SonarQube') {
+                withSonarQubeEnv(credentialsId: 'jenkins-sonar') {
                     sh 'sonar-scanner'
                 }
             }
