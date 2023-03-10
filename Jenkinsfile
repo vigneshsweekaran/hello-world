@@ -21,6 +21,9 @@ pipeline {
               withSonarQubeEnv('sonarqube') {
                sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=/var/jenkins_home/workspace/sonar/target"
                 }
+                timeout(time: 1, unit: 'MINUTES') {
+              waitForQualityGate abortPipeline: true
+                }
 
             }
         }
