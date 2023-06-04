@@ -2,23 +2,19 @@ package com.helloworld;
 
 public class MyCalculator {
 
-  public int addition(num1, num2) {
-    output = num1 + num2
-    return output;
+  public int addition(int num1, int num2) {
+    return num1 + num2;
   }
 
-  public int subtraction(num1, num2) {
-    output = num1 - num2
-    return output;
+  public int subtraction(int num1, int num2) {
+    return num1 - num2;
   }
 
-  public int multiplication(num1, num2) {
-    output = num1 * num2
-    return output;
+  public int multiplication(int num1, int num2) {
+    return num1 * num2;
   }
 
-  public int division(num1, num2) {
-    output = num1 / num2
-    return output;
+  public int division(int num1, int num2) {
+    return num1 / num2;
   }
 }
