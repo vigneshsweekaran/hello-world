@@ -1,0 +1,12 @@
+name: 1.first-pipeline
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build Code
+      run: |
+        cat /etc/os-release
+        ls -l
+        pwd
