@@ -11,6 +11,16 @@ mvn clean package
 ```
 ### War file is generated in target/hello-world.war
 
+### Adding jackson library
+
+```
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.15.2</version>
+</dependency>
+```
+
 ## Github Actions
 Topic|Branch name| 
 |----|-----|
