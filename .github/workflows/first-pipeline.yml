@@ -6,4 +6,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: free -h
+      - run: |
+         free -h
+         pwd
+         ls -l
+         ls -la
