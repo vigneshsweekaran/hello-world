@@ -14,7 +14,7 @@ public class MyCalculatorUsingMath {
     return Math.multiplyExact(num1, num2);
   }
 
-  public int squareRoot(int num) {
+  public double squareRoot(int num) {
     return Math.sqrt(num);
   }
 
