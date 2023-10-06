@@ -1,11 +1,17 @@
 pipeline {
     agent any
+    options {
+      disableConcurrentBuilds()
+      buildDiscarder(logRotator(numToKeepStr: '10'))
+      timeout(time: 1, unit: 'HOURS')
+    }
     tools {
         maven 'maven-3.6.3' 
     }
     environment {
         DATE = new Date().format('yy.M')
         TAG = "${DATE}.${BUILD_NUMBER}"
+        scannerHome = tool 'sonarscanner'
     }
     stages {
         stage ('Build') {
@@ -30,11 +36,12 @@ pipeline {
                 }
             }
         }
-        stage('Deploy'){
+        stage('Deploy to Kubernetes'){
             steps {
-                sh "docker stop hello-world | true"
-                sh "docker rm hello-world | true"
-                sh "docker run --name hello-world -d -p 9004:8080 vigneshsweekaran/hello-world:${TAG}"
+                withCredentials([sshUserPrivateKey(credentialsId: 'vm-key', keyFileVariable: 'SSH_PRIVATE_KEY_PATH')]) {
+                    sh "scp -i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no deployment/deployment.yaml opc@k8s.letspractice.tk:/tmp/."
+                    sh "ssh -i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no opc@k8s.letspractice.tk 'kubectl apply -f /tmp/deployment.yaml'"
+                }
             }
         }
     }

@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    options {
+      disableConcurrentBuilds()
+      buildDiscarder(logRotator(numToKeepStr: '10'))
+      timeout(time: 1, unit: 'HOURS')
+    }
     tools {
         maven 'maven-3.6.3' 
     }
@@ -12,6 +17,18 @@ pipeline {
         stage ('Build') {
             steps {
                 sh 'mvn clean package'
+            }
+        }
+	    stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
+        stage("Quality gate") {
+            steps {
+                waitForQualityGate abortPipeline: true
             }
         }
         stage('Docker Build') {
@@ -31,12 +48,11 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Kubernetes'){
+        stage('Deploy'){
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'vm-key', keyFileVariable: 'SSH_PRIVATE_KEY_PATH')]) {
-                    sh "scp -i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no deployment/deployment.yaml opc@k8s.letspractice.tk:/tmp/."
-                    sh "ssh -i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no opc@k8s.letspractice.tk 'kubectl apply -f /tmp/deployment.yaml'"
-                }
+                sh "docker stop hello-world | true"
+                sh "docker rm hello-world | true"
+                sh "docker run --name hello-world -d -p 9004:8080 vigneshsweekaran/hello-world:${TAG}"
             }
         }
     }
