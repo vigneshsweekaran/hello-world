@@ -2,6 +2,7 @@ pipeline {
   agent any
   options {
     disableConcurrentBuilds()
+    disableResume()
     buildDiscarder(logRotator(numToKeepStr: '10'))
     timeout(time: 1, unit: 'HOURS')
   }
@@ -9,13 +10,18 @@ pipeline {
     maven 'maven-3.6.3' 
   }
   parameters {
-    choice(name: 'MAVEN_GOAL', choices: ['build', 'test', 'package'], description: 'Maven goal')
+    string(name: 'MAVEN_GOAL', defaultValue: 'build', description: 'Maven goal eg: build, test or package')
   }
   stages {
     stage ('Build') {
       steps {
         sh "mvn clean ${params.MAVEN_GOAL}"
       }
+    }
+  }
+  post {
+    always {
+      deleteDir()
     }
   }
 }

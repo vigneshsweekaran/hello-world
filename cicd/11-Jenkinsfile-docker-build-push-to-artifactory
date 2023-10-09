@@ -2,6 +2,7 @@ pipeline {
   agent any
   options {
     disableConcurrentBuilds()
+    disableResume()
     buildDiscarder(logRotator(numToKeepStr: '10'))
     timeout(time: 1, unit: 'HOURS')
   }
@@ -41,6 +42,11 @@ pipeline {
         sh "docker rm hello-world | true"
         sh "docker run --name hello-world -d -p 9004:8080 vigneshsweekaran.jfrog.io/default-docker-local/hello-world:${TAG}"
       }
+    }
+  }
+  post {
+    always {
+      deleteDir()
     }
   }
 }

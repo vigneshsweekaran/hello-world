@@ -2,6 +2,7 @@ pipeline {
     agent any
     options {
       disableConcurrentBuilds()
+      disableResume()
       buildDiscarder(logRotator(numToKeepStr: '10'))
       timeout(time: 1, unit: 'HOURS')
     }
@@ -55,5 +56,10 @@ pipeline {
                 sh "docker run --name hello-world -d -p 9004:8080 vigneshsweekaran/hello-world:${TAG}"
             }
         }
+    }
+    post {
+      always {
+        deleteDir()
+      }
     }
 }

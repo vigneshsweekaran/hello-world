@@ -2,6 +2,7 @@ pipeline {
   agent any
   options {
     disableConcurrentBuilds()
+    disableResume()
     buildDiscarder(logRotator(numToKeepStr: '10'))
     timeout(time: 1, unit: 'HOURS')
   }
@@ -14,12 +15,10 @@ pipeline {
         sh 'mvn clean package'
       }
     }
-    stage ('Deploy') {
-      steps {
-        script {
-          deploy adapters: [tomcat9(credentialsId: 'tomcat_credential', path: '', url: 'http://localhost:8081')], contextPath: '/pipeline', onFailure: false, war: 'webapp/target/*.war' 
-        }
-      }
+  }
+  post {
+    always {
+      deleteDir()
     }
   }
 }

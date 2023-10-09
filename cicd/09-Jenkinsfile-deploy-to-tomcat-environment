@@ -1,0 +1,36 @@
+pipeline {
+  agent any
+  options {
+    disableConcurrentBuilds()
+    disableResume()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timeout(time: 1, unit: 'HOURS')
+  }
+  tools {
+    maven 'maven-3.6.3' 
+  }
+  environment {
+    TOMCAT_URL    = "http://localhost:8080"
+    CONTEXT_PATH  = "/pipeline"
+    WAR_FILE_PATH = "webapp/target/*.war"
+  }
+  stages {
+    stage ('Build') {
+      steps {
+        sh 'mvn clean package'
+      }
+    }
+    stage ('Deploy') {
+      steps {
+        script {
+          deploy adapters: [tomcat9(credentialsId: 'tomcat_credential', path: '', url: "${env.TOMCAT_URL}")], contextPath: "${env.CONTEXT_PATH}", onFailure: false, war: "${env.WAR_FILE_PATH}"
+        }
+      }
+    }
+  }
+  post {
+    always {
+      deleteDir()
+    }
+  }
+}
