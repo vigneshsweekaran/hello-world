@@ -1,10 +1,7 @@
-pipeline {
+topipeline {
   agent any
   triggers {
-    githubPush
-  }
-  tools {
-    maven 'maven-3.6.3' 
+    githubPush()
   }
   stages {
     stage ('Build') {
