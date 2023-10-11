@@ -1,11 +1,5 @@
 pipeline {
   agent any
-  options {
-    disableConcurrentBuilds()
-    disableResume()
-    buildDiscarder(logRotator(numToKeepStr: '10'))
-    timeout(time: 1, unit: 'HOURS')
-  }
   tools {
     maven 'maven-3.6.3' 
   }
