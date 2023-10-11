@@ -13,7 +13,7 @@ folder(folderName) {
   displayName(folderName)
 }
 
-for pipelineDetail in pipelineDetails {
+for(pipelineDetail in pipelineDetails) {
   pipelineJob("${folderName}/${pipelineDetail.name}") {
     definition {
       cpsScm {
