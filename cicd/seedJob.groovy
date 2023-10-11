@@ -1,4 +1,4 @@
-def folderName = "hello-world"
+def folderName = "devopspilot"
 def pipelineDetails = [
   [name: "01-echo-helloworld", script_path: "cicd/01-Jenkinsfile-helloworld"],
   [name: "02-maven-build", script_path: "cicd/02-Jenkinsfile-maven-build"],
