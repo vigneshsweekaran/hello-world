@@ -1,4 +1,6 @@
-folder('hello-world') {
+def folderName = "hello-world"
+
+folder(folderName) {
   displayName('hello-world')
 }
 pipelineJob('01-echo-helloworld') {
