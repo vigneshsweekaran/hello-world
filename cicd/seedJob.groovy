@@ -1,4 +1,4 @@
-def folderName = "devopspilot"
+def folderName = "hello-world"
 def pipelineDetails = [
   [name: "01-echo-helloworld", script_path: "cicd/01-Jenkinsfile-helloworld"],
   [name: "02-maven-build", script_path: "cicd/02-Jenkinsfile-maven-build"],
@@ -13,7 +13,7 @@ folder(folderName) {
   displayName(folderName)
 }
 
-for(pipelineDetail in pipelineDetails) {
+for (pipelineDetail in pipelineDetails) {
   pipelineJob("${folderName}/${pipelineDetail.name}") {
     definition {
       cpsScm {
