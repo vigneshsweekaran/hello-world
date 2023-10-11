@@ -1,3 +1,6 @@
+folder('hello-world') {
+  displayName('hello-world')
+}
 pipelineJob('01-echo-helloworld') {
   definition {
     cpsScm {
