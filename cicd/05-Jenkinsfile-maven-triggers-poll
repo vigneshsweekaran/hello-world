@@ -3,7 +3,7 @@ pipeline {
   triggers {
     // * * * * * --> Every one minute
     // H/2 * * * * --> Every 2 minutes
-    pollSCM '* * * * *'
+    pollSCM 'H/2 * * * *'
   }
   tools {
     maven 'maven-3.6.3' 
