@@ -1,5 +1,7 @@
 # Maven web application project
 
+### Java version: 11
+
 ### Clean fresh application code is available in hell-world-maven branch and hello-world-maven tag
 To clone the hello-world-maven branch
 ```
@@ -9,6 +11,7 @@ git clone -b hello-world-maven https://github.com/vigneshsweekaran/hello-world.g
 ```
 mvn clean package
 ```
+
 ### War file is generated in target/hello-world.war
 
 ### Adding jackson library
@@ -20,6 +23,36 @@ mvn clean package
     <version>2.15.2</version>
 </dependency>
 ```
+
+### Adding jacoco plugin
+```
+<plugin>
+  <groupId>org.jacoco</groupId>
+  <artifactId>jacoco-maven-plugin</artifactId>
+  <version>0.8.7</version>
+  <executions>
+    <execution>
+        <goals>
+          <goal>prepare-agent</goal>
+        </goals>
+    </execution>
+    <execution>
+        <id>report</id>
+        <phase>prepare-package</phase>
+        <goals>
+          <goal>report</goal>
+        </goals>
+    </execution>
+  </executions>
+</plugin>
+```
+
+### To generate jacoco code coverage report using maven
+```
+mvn jacoco:report
+```
+
+Code coverage report is located in target/site/jacoco/index.html
 
 ## Github Actions
 Topic|Branch name| 
