@@ -4,19 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculator</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<style>
-  body {
-    background-color: lightblue;
-  }
-</style>
 <body>
+  <h2 class="heading">Calculator</h2>
   <form style="margin: auto; width: 220px;" action="index.jsp" method="GET">
-    Number 1: <input type="number" name="number1"/>
-    <br/>
-    Number 2: <input type="number" name="number2"/>
-    <br/>
-    <input type="submit" value="Submit"/>
+    <a>Number 1</a> <input class="input" type="number" name="number1"/>
+    <br>
+    <a>Number 2</a> <input class="input" type="number" name="number2"/>
+    <input class="submit" type="submit" value="Submit"/>
   </form>
 </body>
 </html>
