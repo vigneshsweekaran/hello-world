@@ -15,10 +15,24 @@ pipeline {
         sh 'mvn clean package'
       }
     }
-    stage ('Deploy') {
+    stage ('Deploy to Dev') {
       steps {
         script {
           deploy adapters: [tomcat9(credentialsId: 'tomcat_credential', path: '', url: 'http://20.197.20.20:8080')], contextPath: '/helloworld', onFailure: false, war: 'webapp/target/*.war' 
+        }
+      }
+    }
+    stage ('Deploy to Qa') {
+      steps {
+        script {
+          deploy adapters: [tomcat9(credentialsId: 'tomcat-credential', path: '', url: 'http://20.197.20.30:8080')], contextPath: '/helloworld', onFailure: false, war: 'target/hello-world-*.war'
+        }
+      }
+    }
+    stage ('Deploy to Prod') {
+      steps {
+        script {
+          deploy adapters: [tomcat9(credentialsId: 'tomcat-credential', path: '', url: 'http://20.197.20.178:8080')], contextPath: '/helloworld', onFailure: false, war: 'target/hello-world-*.war'
         }
       }
     }

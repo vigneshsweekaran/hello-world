@@ -1,0 +1,47 @@
+pipeline {
+  agent any
+  options {
+    disableConcurrentBuilds()
+    disableResume()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timeout(time: 1, unit: 'HOURS')
+  }
+  tools {
+    maven 'maven-3.6.3' 
+  }
+  environment {
+    DOCKER_REGISTRY = "vigneshsweekaran.jfrog.io"
+    DOCKER_REPOSITORY = "docker-helloworld-dev-local"
+    IMAGE_NAME = "hello-world-java"
+    IMAGE_TAG = "1.${BUILD_NUMBER}"
+    DOCKER_CREDENTIAL_ID = "jfrog-credential"
+  }
+  stages {
+    stage ('Build') {
+      steps {
+        sh 'mvn clean package'
+      }
+    }
+    stage ('Docker Build') {
+      steps {
+        script {
+          docker.build("${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG}")
+        }
+      }
+    }
+    stage ('Docker Push') {
+      steps {
+        script {
+          docker.withRegistry("https://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIAL_ID}") {
+            docker.image("${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG}").push() 
+          }           
+        }
+      }
+    }
+    stage ('Trigger deployment') {
+      steps {
+        build wait: false, job: 'deploy',  parameters: [string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")]
+      }
+    }
+  }
+}

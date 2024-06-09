@@ -1,0 +1,31 @@
+pipeline {
+  agent any
+  options {
+    disableConcurrentBuilds()
+    disableResume()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timeout(time: 1, unit: 'HOURS')
+  }
+  stages {
+    stage ('Jenkins Predefined Environment Variables') {
+      steps {
+        sh """
+          echo JOB_NAME      : ${JOB_NAME}
+          echo JOB_BASE_NAME : ${JOB_BASE_NAME}
+          echo BUILD_NUMBER  : ${BUILD_NUMBER}
+          echo WORKSPACE     : ${WORKSPACE}
+          echo JENKINS_HOME  : ${JENKINS_HOME}
+          echo JENKINS_URL   : ${JENKINS_URL}
+          echo BUILD_URL     : ${BUILD_URL}
+          echo JOB_URL       : ${JOB_URL}
+          echo NODE_NAME     : ${NODE_NAME}
+        """
+      }
+    }
+  }
+  post {
+    always {
+      deleteDir()
+    }
+  }
+}

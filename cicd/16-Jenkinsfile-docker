@@ -1,0 +1,102 @@
+pipeline {
+  agent any
+  options {
+    disableConcurrentBuilds()
+    disableResume()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timeout(time: 1, unit: 'HOURS')
+  }
+  tools {
+    maven 'maven-3.6.3' 
+  }
+  parameters {
+    choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Choose Environment')
+  }
+  environment {
+    DOCKER_CREDENTIAL_ID = "docker-credential"
+    SSH_CREDENTIAL_ID = "ssh-pass-credential"
+  }
+  stages {
+    stage ('Build') {
+      steps {
+        sh "mvn clean package"
+      }
+    }
+    stage ('Docker Build') {
+      steps {
+        sh "docker build -t hello-world:1.${BUILD_NUMBER} ."
+      }
+    }
+    stage ('Docker Push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIAL_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+          sh """
+            echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
+            docker tag hello-world:1.${BUILD_NUMBER} ${DOCKER_USERNAME}/hello-world:1.${BUILD_NUMBER}
+            docker push ${DOCKER_USERNAME}/hello-world-java:1.${BUILD_NUMBER}
+            docker logout
+          """
+        }
+      }
+    }
+    stage ('Deploy to Dev') {
+      when {
+        environment name: "ENVIRONMENT", value: "dev"
+      }
+      steps {
+        script {
+          withCredentials([usernamePassword(credentialsId: "${SSH_CREDENTIAL_ID}", passwordVariable: 'SSH_PASSWORD', usernameVariable: 'SSH_USERNAME')]) {
+            def remote = [:]
+            remote.name = 'test'
+            remote.host = '20.193.155.41'
+            remote.user = "${SSH_USERNAME}"
+            remote.password = "${SSH_PASSWORD}"
+            remote.allowAnyHosts = true
+            sshCommand remote: remote, command: "docker rm -f hello-world-java || true && docker run -d --name hello-world-java -p 8080:8080 rajasindhuradha/hello-world-java:1.${BUILD_NUMBER}"
+          }
+        }
+      }
+    }
+    stage ('Deploy to Qa') {
+      when {
+        environment name: "ENVIRONMENT", value: "qa"
+      }
+      steps {
+        script {
+          withCredentials([usernamePassword(credentialsId: "${SSH_CREDENTIAL_ID}", passwordVariable: 'SSH_PASSWORD', usernameVariable: 'SSH_USERNAME')]) {
+            def remote = [:]
+            remote.name = 'test'
+            remote.host = '20.197.20.30'
+            remote.user = "${SSH_USERNAME}"
+            remote.password = "${SSH_PASSWORD}"
+            remote.allowAnyHosts = true
+            sshCommand remote: remote, command: "docker rm -f hello-world-java || true && docker run -d --name hello-world-java -p 8080:8080 rajasindhuradha/hello-world-java:1.${BUILD_NUMBER}"
+          }
+        }
+      }
+    }
+    stage ('Deploy to Prod') {
+      when {
+        environment name: "ENVIRONMENT", value: "prod"
+      }
+      steps {
+        script {
+          withCredentials([usernamePassword(credentialsId: "${SSH_CREDENTIAL_ID}", passwordVariable: 'SSH_PASSWORD', usernameVariable: 'SSH_USERNAME')]) {
+            def remote = [:]
+            remote.name = 'test'
+            remote.host = '20.197.20.178'
+            remote.user = "${SSH_USERNAME}"
+            remote.password = "${SSH_PASSWORD}"
+            remote.allowAnyHosts = true
+            sshCommand remote: remote, command: "docker rm -f hello-world-java || true && docker run -d --name hello-world-java -p 8080:8080 rajasindhuradha/hello-world-java:1.${BUILD_NUMBER}"
+          }
+        }
+      }
+    }
+  }
+  post {
+    always {
+      deleteDir()
+    }
+  }
+}

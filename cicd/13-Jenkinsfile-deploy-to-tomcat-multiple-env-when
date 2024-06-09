@@ -1,0 +1,57 @@
+pipeline {
+  agent any
+  options {
+    disableConcurrentBuilds()
+    disableResume()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timeout(time: 1, unit: 'HOURS')
+  }
+  tools {
+    maven 'maven-3.6.3' 
+  }
+  parameters {
+    choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Choose Environment')
+  }
+  stages {
+    stage ('Build') {
+      steps {
+        sh 'mvn clean package'
+      }
+    }
+    stage ('Deploy to Dev') {
+      when {
+        environment name: "ENVIRONMENT", value: "dev"
+      }
+      steps {
+        script {
+          deploy adapters: [tomcat9(credentialsId: 'tomcat_credential', path: '', url: 'http://20.197.20.20:8080')], contextPath: '/helloworld', onFailure: false, war: 'webapp/target/*.war' 
+        }
+      }
+    }
+    stage ('Deploy to Qa') {
+      when {
+        environment name: "ENVIRONMENT", value: "qa"
+      }
+      steps {
+        script {
+          deploy adapters: [tomcat9(credentialsId: 'tomcat-credential', path: '', url: 'http://20.197.20.30:8080')], contextPath: '/helloworld', onFailure: false, war: 'target/hello-world-*.war'
+        }
+      }
+    }
+    stage ('Deploy to Prod') {
+      when {
+        environment name: "ENVIRONMENT", value: "prod"
+      }
+      steps {
+        script {
+          deploy adapters: [tomcat9(credentialsId: 'tomcat-credential', path: '', url: 'http://20.197.20.178:8080')], contextPath: '/helloworld', onFailure: false, war: 'target/hello-world-*.war'
+        }
+      }
+    }
+  }
+  post {
+    always {
+      deleteDir()
+    }
+  }
+}

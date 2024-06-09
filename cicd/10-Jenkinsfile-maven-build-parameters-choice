@@ -6,6 +6,9 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '10'))
     timeout(time: 1, unit: 'HOURS')
   }
+  tools {
+    maven 'maven-3.6.3' 
+  }
   parameters {
     choice(name: 'MAVEN_GOAL', choices: ['compile', 'test', 'package', 'install'], description: 'Maven goal')
   }
