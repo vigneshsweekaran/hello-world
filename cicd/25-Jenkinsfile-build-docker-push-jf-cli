@@ -10,7 +10,7 @@ pipeline {
     maven 'maven-3.6.3' 
   }
   environment {
-    DOCKER_REGISTRY = "vigneshsweekaran.jfrog.io"
+    DOCKER_REGISTRY = "vigneshsweekaran2.jfrog.io"
     DOCKER_REPOSITORY = "docker-helloworld-dev-local"
     IMAGE_NAME = "hello-world-java"
     IMAGE_TAG = "1.${BUILD_NUMBER}"
