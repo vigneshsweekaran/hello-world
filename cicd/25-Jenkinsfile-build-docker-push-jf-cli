@@ -32,10 +32,9 @@ pipeline {
     stage ('Docker Push') {
       steps {
         script {
-          def jfrogServerId = "${JOB_BASE_NAME}"
           withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIAL_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
             sh """
-              jf config add ${jfrogServerId} --url https://${DOCKER_REGISTRY} --user ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} --interactive=false
+              jf config add ${JOB_BASE_NAME} --url https://${DOCKER_REGISTRY} --user ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} --interactive=false
 
               jf docker push ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG} --build-name=${IMAGE_NAME} --build-number=${IMAGE_TAG} --server-id ${jfrogServerId}
 
@@ -54,7 +53,7 @@ pipeline {
   post {
     always {
       sh """
-        jf config remove ${jfrogServerId} --quiet
+        jf config remove ${JOB_BASE_NAME} --quiet
       """
       deleteDir()
     }
