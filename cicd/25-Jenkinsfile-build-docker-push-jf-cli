@@ -37,9 +37,9 @@ pipeline {
             sh """
               jf config add ${jfrogServerId} --url https://${DOCKER_REGISTRY} --user ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} --interactive=false
 
-              jf rt docker-push ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG} ${DOCKER_REPOSITORY} --build-name=${IMAGE_NAME} --build-number=${IMAGE_TAG} --server-id ${jfrogServerId}
+              jf docker push ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG} --build-name=${IMAGE_NAME} --build-number=${IMAGE_TAG} --server-id ${jfrogServerId}
 
-              jf rt build-publish --build-name=${IMAGE_NAME} --build-number=${IMAGE_TAG} --server-id ${jfrogServerId}
+              jf rt build-publish ${IMAGE_NAME} ${IMAGE_TAG} --server-id ${jfrogServerId}
             """
           }
         }
