@@ -40,8 +40,6 @@ pipeline {
               jf rt docker-push ${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG} ${DOCKER_REPOSITORY} --build-name=${IMAGE_NAME} --build-number=${IMAGE_TAG} --server-id ${jfrogServerId}
 
               jf rt build-publish --build-name=${IMAGE_NAME} --build-number=${IMAGE_TAG} --server-id ${jfrogServerId}
-
-              jf config remove ${jfrogServerId} --quiet
             """
           }
         }
@@ -51,6 +49,14 @@ pipeline {
       steps {
         build wait: false, job: 'deploy',  parameters: [string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")]
       }
+    }
+  }
+  post {
+    always {
+      sh """
+        jf config remove ${jfrogServerId} --quiet
+      """
+      deleteDir()
     }
   }
 }
