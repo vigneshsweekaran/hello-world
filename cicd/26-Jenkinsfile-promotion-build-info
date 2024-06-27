@@ -9,7 +9,7 @@ pipeline {
     timeout(time: 1, unit: 'HOURS')
   }
   parameters {
-    choice(name: 'TARGET_REPOSITORY', choices: ['qa', 'prod'], description: 'Promote to Jfrog repository')
+    choice(name: 'TARGET_REPOSITORY', choices: ['qa', 'prod'], description: 'Jfrog target repository for promotion')
     string(name: 'BUILD_NUMBER', defaultValue: '1.0', description: 'Jfrog Build Info Build Number')
   }
   environment {
@@ -22,7 +22,7 @@ pipeline {
       steps {
         script {
           def sourecRepository = "dev"
-          if ("TARGET_REPOSITORY" == "prod") {
+          if ("${params.TARGET_REPOSITORY}" == "prod") {
             sourecRepository = "qa"
           }
           def promotionConfig = JsonOutput.toJson([
