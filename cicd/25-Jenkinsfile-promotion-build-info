@@ -1,0 +1,51 @@
+pipeline {
+  agent any
+  options {
+    disableConcurrentBuilds()
+    disableResume()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timeout(time: 1, unit: 'HOURS')
+  }
+  parameters {
+    choice(name: 'TARGET_REPOSITORY', choices: ['qa', 'prod'], description: 'Promote to Jfrog repository')
+    string(name: 'BUILD_NUMBER', defaultValue: '1.0', description: 'Jfrog Build Info Build Number')
+  }
+  environment {
+    ARTIFACTORY_URL = "https://vigneshsweekaran2.jfrog.io"
+    BUILD_NAME = "hello-world-java"
+    ARTIFACTORY_CREDENTIAL_ID = "jfrog-credential"
+  }
+  stages {
+    stage ("Promote to ${params.TARGET_REPOSITORY}") {
+      steps {
+        script {
+          def sourecRepository = "dev"
+          if ("TARGET_REPOSITORY" == "prod") {
+            sourecRepository = "qa"
+          }
+          def promotionConfig = JsonOutput.toJson([
+            status: "promoting",
+            sourceRepo: "docker-helloworld-${sourecRepository}-local",
+            targetRepo: "docker-helloworld-${TARGET_REPOSITORY}-local",
+            copy: true,
+            failFast: true
+          ])
+
+          withCredentials([usernamePassword(credentialsId: "${ARTIFACTORY_CREDENTIAL_ID}", usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+            sh """
+              curl -u --user ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} -X POST ${ARTIFACTORY_URL}/api/build/promote/${BUILD_NAME}/${params.BUILD_NUMBER} --data '${promotionConfig}'
+            """
+          }
+        }
+      }
+    }
+  }
+  post {
+    always {
+      sh """
+        jf config remove ${JOB_BASE_NAME} --quiet
+      """
+      deleteDir()
+    }
+  }
+}
