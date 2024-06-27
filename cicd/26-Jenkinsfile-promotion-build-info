@@ -1,3 +1,5 @@
+import groovy.json.JsonOutput
+
 pipeline {
   agent any
   options {
@@ -33,7 +35,7 @@ pipeline {
 
           withCredentials([usernamePassword(credentialsId: "${ARTIFACTORY_CREDENTIAL_ID}", usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
             sh """
-              curl -u --user ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} -X POST ${ARTIFACTORY_URL}/api/build/promote/${BUILD_NAME}/${params.BUILD_NUMBER} --data '${promotionConfig}'
+              curl -u ${ARTIFACTORY_USERNAME} -p ${ARTIFACTORY_PASSWORD} -X POST ${ARTIFACTORY_URL}/artifactory/api/build/promote/${BUILD_NAME}/${params.BUILD_NUMBER} --data '${promotionConfig}'
             """
           }
         }
@@ -42,9 +44,6 @@ pipeline {
   }
   post {
     always {
-      sh """
-        jf config remove ${JOB_BASE_NAME} --quiet
-      """
       deleteDir()
     }
   }
