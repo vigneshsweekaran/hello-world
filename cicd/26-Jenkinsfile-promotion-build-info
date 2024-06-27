@@ -35,7 +35,7 @@ pipeline {
 
           withCredentials([usernamePassword(credentialsId: "${ARTIFACTORY_CREDENTIAL_ID}", usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
             sh """
-              curl -u ${ARTIFACTORY_USERNAME} -p ${ARTIFACTORY_PASSWORD} -X POST ${ARTIFACTORY_URL}/artifactory/api/build/promote/${BUILD_NAME}/${params.BUILD_NUMBER} --data '${promotionConfig}'
+              curl -u${ARTIFACTORY_USERNAME}:${ARTIFACTORY_PASSWORD} -X POST ${ARTIFACTORY_URL}/artifactory/api/build/promote/${BUILD_NAME}/${params.BUILD_NUMBER} -H \"Content-Type: application/json\" --data '${promotionConfig}'
             """
           }
         }
