@@ -16,7 +16,7 @@ pipeline {
     ARTIFACTORY_CREDENTIAL_ID = "jfrog-credential"
   }
   stages {
-    stage ("Promote to ${params.TARGET_REPOSITORY}") {
+    stage ("Promotion") {
       steps {
         script {
           def sourecRepository = "dev"
