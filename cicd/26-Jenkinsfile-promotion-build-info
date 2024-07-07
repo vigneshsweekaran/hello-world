@@ -28,7 +28,7 @@ pipeline {
           def promotionConfig = JsonOutput.toJson([
             status: "promoting",
             sourceRepo: "docker-helloworld-${sourecRepository}-local",
-            targetRepo: "docker-helloworld-${TARGET_REPOSITORY}-local",
+            targetRepo: "docker-helloworld-${params.TARGET_REPOSITORY}-local",
             copy: true,
             failFast: true
           ])
