@@ -72,3 +72,22 @@ Topic|Branch name|
 |Deploy to kubernetes using helm using ssh|deploy-k8s-helm-ssh|
 
 Tested polling for polling
+
+## Issues Faced
+### Build failed with Java 21
+```
+WARNING Error injecting: org.apache.maven.plugin.war.WarMojo
+com.google.inject.ProvisionException Unable to provision, see the following errors:
+
+Error injecting constructor, java.lang.ExceptionInInitializerError: Cannot access defaults field of Properties
+  at org.apache.maven.plugin.war.WarMojo.<init>(Unknown Source)
+  while locating org.apache.maven.plugin.war.WarMojo
+```
+Fix: Use the latest plugin version
+```
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-war-plugin</artifactId>
+  <version>3.3.1</version>
+</plugin>
+```
