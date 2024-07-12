@@ -1,6 +1,0 @@
-deployment/secrets/** filter=git-crypt diff=git-crypt
-deployment/dev/secrets.yaml filter=git-crypt diff=git-crypt
-deployment/staging/secrets.yaml filter=git-crypt diff=git-crypt
-deployment/prod/secrets.yaml filter=git-crypt diff=git-crypt
-
-.gitattributes !filter !diff
