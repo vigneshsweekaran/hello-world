@@ -1,10 +1,7 @@
 pipeline {
   agent any
-  options {
-    disableConcurrentBuilds()
-    disableResume()
-    buildDiscarder(logRotator(numToKeepStr: '10'))
-    timeout(time: 1, unit: 'HOURS')
+  triggers {
+    upstream '01-hello-world-java'
   }
   tools {
     maven 'maven-3.6.3' 

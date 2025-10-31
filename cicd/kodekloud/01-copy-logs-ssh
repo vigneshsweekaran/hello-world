@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Copy') {
+            steps {
+              script {
+                withCredentials([usernamePassword(credentialsId: "app03", passwordVariable: 'SSH_PASSWORD', usernameVariable: 'SSH_USERNAME')]) {
+                    def remote = [:]
+                    remote.name = 'test'
+                    remote.host = '172.16.238.12'
+                    remote.user = "${SSH_USERNAME}"
+                    remote.password = "${SSH_PASSWORD}"
+                    remote.allowAnyHosts = true
+                    sshCommand remote: remote, command: "scp /var/log/httpd/error_log natasha@ststor01:/usr/src/security && scp /var/log/httpd/access_log natasha@ststor01:/usr/src/security"
+                }
+              }
+            }
+        }
+    }
+}

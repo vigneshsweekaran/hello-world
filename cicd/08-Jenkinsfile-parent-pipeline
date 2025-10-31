@@ -1,0 +1,18 @@
+pipeline {
+  agent any
+  tools {
+    maven 'maven-3.6.3' 
+  }
+  stages {
+    stage ('Build') {
+      steps {
+        sh 'mvn clean package'
+      }
+    }
+    stage ('Trigger child pipeline') {
+      steps {
+        build job: '08-hello-world-child-pipeline', wait: true
+      }
+    }
+  }
+}

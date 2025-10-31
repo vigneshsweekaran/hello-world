@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Copy') {
+            steps {
+              script {
+                withCredentials([usernamePassword(credentialsId: "db01", passwordVariable: 'SSH_PASSWORD', usernameVariable: 'SSH_USERNAME')]) {
+                    def remote = [:]
+                    remote.name = 'test'
+                    remote.host = '172.16.239.10'
+                    remote.user = "${SSH_USERNAME}"
+                    remote.password = "${SSH_PASSWORD}"
+                    remote.allowAnyHosts = true
+                    sshCommand remote: remote, command: "mysqldump -u kodekloud_roy --password=asdfgdsd kodekloud_db01 > db_\$(date +%F).sql && scp db_2025-10-31.sql clint@stbkp01:/home/clint/db_backups/"
+                }
+              }
+            }
+        }
+    }
+}
