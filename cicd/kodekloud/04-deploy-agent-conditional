@@ -1,0 +1,34 @@
+pipeline {
+    agent { label 'ststor01' }
+
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'master', description: 'Branch to deploy (master/feature)')
+    }
+
+    stages {
+        stage('Deploy') {
+            steps {
+                script {
+                    // Clone the repository with specified branch
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: "*/${params.BRANCH}"]],
+                        userRemoteConfigs: [[url: 'http://git.stratos.xfusioncorp.com/sarah/web_app.git']]
+                    ])
+
+                    // Deploy to storage server using SSH
+                    withCredentials([usernamePassword(credentialsId: "stor01", passwordVariable: 'SSH_PASSWORD', usernameVariable: 'SSH_USERNAME')]) {
+                        def remote = [:]
+                        remote.name = 'test'
+                        remote.host = '172.16.238.15'
+                        remote.user = "${SSH_USERNAME}"
+                        remote.password = "${SSH_PASSWORD}"
+                        remote.allowAnyHosts = true
+                        
+                        // Copy all files from workspace to remote server
+                        sshPut remote: remote, from: 'index.html', into: '/var/www/html'
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+pipeline {
+    agent { label 'ststor01' }
+
+    stages {
+        stage('Copy') {
+            steps {
+              script {
+                withCredentials([usernamePassword(credentialsId: "stor01", passwordVariable: 'SSH_PASSWORD', usernameVariable: 'SSH_USERNAME')]) {
+                    def remote = [:]
+                    remote.name = 'test'
+                    remote.host = '172.16.238.15'
+                    remote.user = "${SSH_USERNAME}"
+                    remote.password = "${SSH_PASSWORD}"
+                    remote.allowAnyHosts = true
+                    sshPut remote: remote, from: 'index.html', into: '/var/www/html/'
+                }
+              }
+            }
+        }
+    }
+}
