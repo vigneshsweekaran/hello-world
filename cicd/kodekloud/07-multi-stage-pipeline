@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy') {
+            steps {
+              script {
+                sh """
+                    sshpass -p 'Bl@kW' scp -o StrictHostKeyChecking=no -r ./* natasha@172.16.238.15:/var/www/html/
+                """
+              }
+            }
+        }
+        stage('Test') {
+            steps {
+              script {
+                sh """
+                  set -e sshpass -p 'Bl@kW' ssh -o StrictHostKeyChecking=no natasha@172.16.238.15 \
+                        "echo 'Bl@kW' | sudo -S curl --fail -s http://stlb01:8091 > /dev/null"
+                """
+              }
+            }
+        }
+    }
+}

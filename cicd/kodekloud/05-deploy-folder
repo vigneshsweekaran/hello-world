@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Copy') {
+            steps {
+              script {
+                  sh """
+                    sshpass -p 'Bl@kW' scp -o StrictHostKeyChecking=no -r ./* natasha@172.16.238.15:/var/www/html/
+                  """
+              }
+            }
+        }
+    }
+}
+
+#yum install -y httpd
+#sed -i 's/^Listen 80$/Listen 8080/' /etc/httpd/conf/httpd.conf
+#systemctl restart httpd
+#systemctl status httpd
+#https://8080-port-o2gz7kks4ifjulch.labs.kodekloud.com/generic-webhook-trigger/invoke?token=aaaaa

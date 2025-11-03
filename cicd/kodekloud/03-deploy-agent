@@ -12,7 +12,7 @@ pipeline {
                     remote.user = "${SSH_USERNAME}"
                     remote.password = "${SSH_PASSWORD}"
                     remote.allowAnyHosts = true
-                    sshPut remote: remote, from: 'index.html', into: '/var/www/html/'
+                    sshPut remote: remote, from: './', into: '/var/www/html/'
                 }
               }
             }

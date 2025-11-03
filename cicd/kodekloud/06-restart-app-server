@@ -1,0 +1,3 @@
+sshpass -p 'Ir0nM@n' ssh -o StrictHostKeyChecking=no tony@172.16.238.10 "echo 'Ir0nM@n' | sudo -S systemctl restart httpd"
+sshpass -p 'Am3ric@' ssh -o StrictHostKeyChecking=no steve@172.16.238.11 "echo 'Am3ric@' | sudo -S systemctl restart httpd"
+sshpass -p 'BigGr33n' ssh -o StrictHostKeyChecking=no banner@172.16.238.12 "echo 'BigGr33n' | sudo -S systemctl restart httpd"
