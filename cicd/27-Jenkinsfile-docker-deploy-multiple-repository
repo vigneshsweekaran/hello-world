@@ -1,3 +1,5 @@
+//Manual promotion in Jfrog UI to docker-helloworld-qa-local and docker-helloworld-prod-local before deploying to qa/prod
+
 pipeline {
   agent any
   options {
