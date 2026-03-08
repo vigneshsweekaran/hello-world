@@ -1,0 +1,63 @@
+pipeline {
+  agent any
+  options {
+    disableConcurrentBuilds()
+    disableResume()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timeout(time: 1, unit: 'HOURS')
+  }
+  parameters {
+    choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Choose Environment to deploy')
+    string(name: 'IMAGE_TAG', defaultValue: '1.0', description: 'Docker image tag to deploy')
+  }
+  environment {
+    HELM_CHART_PATH = "deployment/helm-chart"
+    RELEASE_NAME    = "hello-world"
+  }
+  stages {
+    stage('Deploy to Dev') {
+      when {
+        environment name: 'ENVIRONMENT', value: 'dev'
+      }
+      steps {
+        sh """
+          helm upgrade --install ${RELEASE_NAME} ${HELM_CHART_PATH} \
+            -f ${HELM_CHART_PATH}/values-dev.yaml \
+            --set image.tag=${params.IMAGE_TAG} \
+            --namespace dev --create-namespace
+        """
+      }
+    }
+    stage('Deploy to QA') {
+      when {
+        environment name: 'ENVIRONMENT', value: 'qa'
+      }
+      steps {
+        sh """
+          helm upgrade --install ${RELEASE_NAME} ${HELM_CHART_PATH} \
+            -f ${HELM_CHART_PATH}/values-qa.yaml \
+            --set image.tag=${params.IMAGE_TAG} \
+            --namespace qa --create-namespace
+        """
+      }
+    }
+    stage('Deploy to Prod') {
+      when {
+        environment name: 'ENVIRONMENT', value: 'prod'
+      }
+      steps {
+        sh """
+          helm upgrade --install ${RELEASE_NAME} ${HELM_CHART_PATH} \
+            -f ${HELM_CHART_PATH}/values-prod.yaml \
+            --set image.tag=${params.IMAGE_TAG} \
+            --namespace prod --create-namespace
+        """
+      }
+    }
+  }
+  post {
+    always {
+      deleteDir()
+    }
+  }
+}

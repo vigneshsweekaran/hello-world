@@ -91,3 +91,35 @@ Fix: Use the latest plugin version
   <version>3.3.1</version>
 </plugin>
 ```
+
+## Helm Deployment
+
+Helm chart is located in `deployment/helm-chart/`.
+
+**Image:** `us-docker.pkg.dev/google-samples/containers/gke/hello-app:1.0`
+
+### Deploy to Dev
+```bash
+helm upgrade --install hello-world ./deployment/helm-chart \
+  -f ./deployment/helm-chart/values-dev.yaml \
+  --namespace dev --create-namespace
+```
+
+### Deploy to QA
+```bash
+helm upgrade --install hello-world ./deployment/helm-chart \
+  -f ./deployment/helm-chart/values-qa.yaml \
+  --namespace qa --create-namespace
+```
+
+### Deploy to Prod
+```bash
+helm upgrade --install hello-world ./deployment/helm-chart \
+  -f ./deployment/helm-chart/values-prod.yaml \
+  --namespace prod --create-namespace
+```
+
+### Uninstall
+```bash
+helm uninstall hello-world --namespace <dev|qa|prod>
+```
