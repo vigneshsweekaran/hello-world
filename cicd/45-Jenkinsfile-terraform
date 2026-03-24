@@ -8,116 +8,33 @@ pipeline {
   }
   parameters {
     choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Choose Environment to deploy')
-    choice(name: 'ACTION', choices: ['plan', 'apply', 'destroy'], description: 'Terraform action to execute')
   }
   environment {
     TF_DIR = "deployment/terraform"
   }
   stages {
-    stage('Terraform Init') {
-      steps {
-        sh """
-          cd ${TF_DIR}
-          terraform init -reconfigure
-        """
-      }
-    }
-
-    stage('Plan Dev') {
+    stage('Deploy to Dev') {
       when {
         environment name: 'ENVIRONMENT', value: 'dev'
       }
       steps {
-        sh """
-          cd ${TF_DIR}
-          terraform plan -var-file=dev.tfvars -out=tfplan
-        """
+        terraformPipeline('dev')
       }
     }
-    stage('Plan QA') {
+    stage('Deploy to QA') {
       when {
         environment name: 'ENVIRONMENT', value: 'qa'
       }
       steps {
-        sh """
-          cd ${TF_DIR}
-          terraform plan -var-file=qa.tfvars -out=tfplan
-        """
+        terraformPipeline('qa')
       }
     }
-    stage('Plan Prod') {
+    stage('Deploy to Prod') {
       when {
         environment name: 'ENVIRONMENT', value: 'prod'
       }
       steps {
-        sh """
-          cd ${TF_DIR}
-          terraform plan -var-file=prod.tfvars -out=tfplan
-        """
-      }
-    }
-
-    stage('Approval') {
-      when {
-        expression { params.ACTION in ['apply', 'destroy'] }
-      }
-      steps {
-        input message: "Approve Terraform ${params.ACTION} for ${params.ENVIRONMENT}?", ok: 'Proceed'
-      }
-    }
-
-    stage('Apply / Destroy Dev') {
-      when {
-        allOf {
-          environment name: 'ENVIRONMENT', value: 'dev'
-          expression { params.ACTION in ['apply', 'destroy'] }
-        }
-      }
-      steps {
-        sh """
-          cd ${TF_DIR}
-          if [ "${params.ACTION}" = "destroy" ]; then
-            terraform destroy -var-file=dev.tfvars -auto-approve
-          else
-            terraform apply tfplan
-          fi
-        """
-      }
-    }
-    stage('Apply / Destroy QA') {
-      when {
-        allOf {
-          environment name: 'ENVIRONMENT', value: 'qa'
-          expression { params.ACTION in ['apply', 'destroy'] }
-        }
-      }
-      steps {
-        sh """
-          cd ${TF_DIR}
-          if [ "${params.ACTION}" = "destroy" ]; then
-            terraform destroy -var-file=qa.tfvars -auto-approve
-          else
-            terraform apply tfplan
-          fi
-        """
-      }
-    }
-    stage('Apply / Destroy Prod') {
-      when {
-        allOf {
-          environment name: 'ENVIRONMENT', value: 'prod'
-          expression { params.ACTION in ['apply', 'destroy'] }
-        }
-      }
-      steps {
-        sh """
-          cd ${TF_DIR}
-          if [ "${params.ACTION}" = "destroy" ]; then
-            terraform destroy -var-file=prod.tfvars -auto-approve
-          else
-            terraform apply tfplan
-          fi
-        """
+        terraformPipeline('prod')
       }
     }
   }
@@ -125,5 +42,15 @@ pipeline {
     always {
       deleteDir()
     }
+  }
+}
+
+def terraformPipeline(env) {
+  def tfvars = "${env}.tfvars"
+  dir(env.TF_DIR) {
+    sh 'terraform init -reconfigure'
+    sh "terraform plan -var-file=${tfvars} -out=tfplan"
+    input message: "Approve Terraform apply for ${env}?", ok: 'Proceed'
+    sh 'terraform apply tfplan'
   }
 }
