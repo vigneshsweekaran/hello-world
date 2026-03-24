@@ -45,12 +45,12 @@ pipeline {
   }
 }
 
-def terraformPipeline(env) {
-  def tfvars = "${env}.tfvars"
+def terraformPipeline(envName) {
+  def tfvars = "${envName}.tfvars"
   dir(env.TF_DIR) {
     sh 'terraform init -reconfigure'
     sh "terraform plan -var-file=${tfvars} -out=tfplan"
-    input message: "Approve Terraform apply for ${env}?", ok: 'Proceed'
+    input message: "Approve Terraform apply for ${envName}?", ok: 'Proceed'
     sh 'terraform apply tfplan'
   }
 }
