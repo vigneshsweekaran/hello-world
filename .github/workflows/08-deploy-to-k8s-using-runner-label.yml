@@ -22,12 +22,12 @@ jobs:
           fetch-depth: 0
       - name: Check dev folder changes
         id: check-dev-folder
-        uses: tj-actions/changed-files@v14.1
+        uses: tj-actions/changed-files@v41
         with:
           files: deployment/dev
       - name: Check prod folder changes
         id: check-prod-folder
-        uses: tj-actions/changed-files@v14.1
+        uses: tj-actions/changed-files@v41
         with:
           files: deployment/prod
       - name: set dev output
